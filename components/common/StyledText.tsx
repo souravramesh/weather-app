@@ -27,6 +27,11 @@ type StyledTextProps = {
     align?: "auto" | "left" | "right" | "center" | "justify";
     decoration?: "none" | "underline" | "line-through" | "underline line-through";
     line?: number;
+    mt?: number;
+    mb?: number;
+    ml?: number;
+    mr?: number;
+    w?: number;
 } & TextProps;
 
 const StyledText = ({
@@ -39,6 +44,11 @@ const StyledText = ({
     opacity,
     decoration,
     line = size * 1.2,
+    mt,
+    mb,
+    ml,
+    mr,
+    w,
     ...props
 }: StyledTextProps) => {
     return (
@@ -52,6 +62,11 @@ const StyledText = ({
                     textAlign: align,
                     textDecorationLine: decoration,
                     lineHeight: line,
+                    marginTop: mt,
+                    marginBottom: mb,
+                    marginLeft: ml,
+                    marginRight: mr,
+                    width: w,
                 },
                 style,
             ]}

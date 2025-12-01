@@ -10,11 +10,16 @@ import {
   Roboto_900Black,
   useFonts,
 } from "@expo-google-fonts/roboto";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const queryClient = new QueryClient();
 
 export default function RootLayout () {
+
   const [loaded, error] = useFonts({
     Roboto_100Thin,
     Roboto_200ExtraLight,
@@ -36,5 +41,11 @@ export default function RootLayout () {
   if (!loaded && !error) {
     return null;
   }
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaView>
+    </QueryClientProvider>
+  );
 }

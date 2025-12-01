@@ -42,7 +42,7 @@ export type BoxViewProps = {
   le?: number;
   ri?: number;
   op?: ViewStyle["opacity"];
-  fl?: number;
+  fw?: ViewStyle["flexWrap"];
 } & ViewProps;
 
 const BoxView = ({ style, ...props }: BoxViewProps) => {
@@ -85,7 +85,7 @@ const BoxView = ({ style, ...props }: BoxViewProps) => {
           left: props.le,
           right: props.ri,
           opacity: props.op,
-          flex: props.fl,
+          flexWrap: props.fw,
         },
       ]}
       {...props}
