@@ -94,18 +94,6 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress, activeTab,
         };
     });
 
-    const solidBgStyle = useAnimatedStyle(() => {
-        const opacity = interpolate(
-            scrollY.value,
-            [150, 200],
-            [0, 1],
-            Extrapolation.CLAMP
-        );
-        return {
-            opacity,
-        };
-    });
-
     // Animate header text color from white to black
     const headerTextColor = useDerivedValue(() => {
         return interpolateColor(

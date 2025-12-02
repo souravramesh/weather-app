@@ -36,7 +36,7 @@ const WeatherScreen = () => {
 
   const { data: weather, isLoading, error } = useWeather(lat, lon);
   const scrollY = useSharedValue(0);
-  // console.log(weather, "weather");
+  console.log(weather, "weather");
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -84,9 +84,6 @@ const WeatherScreen = () => {
     pressure: weather.current.pressure,
   };
 
-  // Map hourly data to chart data (x: index, y: temp)
-  const chartData = displayHourly.map((item, index) => ({ x: index, y: item.temp }));
-
   return (
     <FlexView bg={Colors.background}>
       <StatusBar />
@@ -113,7 +110,7 @@ const WeatherScreen = () => {
           <>
             <StatTiles stats={stats} />
             <HourlyForecast hourly={displayHourly} />
-            <DayForecastCard data={chartData} />
+            <DayForecastCard daily={weather.daily} />
             <ChanceOfRainCard />
           </>
         )}
