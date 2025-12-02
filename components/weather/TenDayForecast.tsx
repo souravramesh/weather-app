@@ -10,7 +10,7 @@ import StyledText from '../common/StyledText';
 
 const TenDayForecast = ({ daily }: { daily: any[] }) => {
     return (
-        <BoxView>
+        <BoxView pt={20}>
             {daily?.map((item, index) => (
                 <BoxView key={index} bg={Colors.surface} r={20} p={15} mb={18} fd="row" ai="center" jc="space-between">
                     <BoxView g={5}>

@@ -15,7 +15,7 @@ const ChanceOfRainCard = () => {
     ];
 
     return (
-        <BoxView bg={Colors.surface} r={24} p={15} mb={20}>
+        <BoxView bg={Colors.surface} r={24} p={15}>
             <BoxView fd="row" ai="center" mb={20} g={10}>
                 <BoxView bg={Colors.white} r={50} p={8}>
                     <RainIcon width={14} height={14} />

@@ -14,28 +14,30 @@ import Animated, {
 import BoxView from '../common/BoxView';
 import StyledText from '../common/StyledText';
 import Header from './Header';
-import SegmentedTabs from './SegmentedTabs';
+import SegmentedTabs, { TabType } from './SegmentedTabs';
 
 interface HeroSectionProps {
     scrollY: SharedValue<number>;
     weather: any; // Type this properly if needed
     locationName: string | null;
     onSearchPress: () => void;
+    activeTab: TabType;
+    onTabChange: (tab: TabType) => void;
 }
 
 const HERO_HEIGHT = 380;
 
-const HeroSection = ({ scrollY, weather, locationName, onSearchPress }: HeroSectionProps) => {
+const HeroSection = ({ scrollY, weather, locationName, onSearchPress, activeTab, onTabChange }: HeroSectionProps) => {
     const containerStyle = useAnimatedStyle(() => {
         const height = interpolate(
             scrollY.value,
-            [0, 200],
+            [0, 250],
             [HERO_HEIGHT, 200],
             Extrapolation.CLAMP
         );
         const borderRadius = interpolate(
             scrollY.value,
-            [0, 200],
+            [0, 250],
             [30, 0],
             Extrapolation.CLAMP
         );
@@ -76,6 +78,7 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress }: HeroSect
         );
         return {
             opacity,
+            pointerEvents: opacity === 0 ? 'none' : 'auto', // Disable touches when hidden
         };
     });
 
@@ -163,7 +166,7 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress }: HeroSect
                         resizeMode="contain"
                     />
                 </BoxView>
-                <SegmentedTabs />
+                <SegmentedTabs activeTab={activeTab} onTabChange={onTabChange} />
             </Animated.View>
 
         </Animated.View>

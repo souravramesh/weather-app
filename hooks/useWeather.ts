@@ -50,7 +50,7 @@ const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
         pressure: Math.round(data.current.surface_pressure),
     };
 
-    const hourly: WeatherHourly[] = data.hourly.time.slice(0, 24).map((time: string, index: number) => ({
+    const hourly: WeatherHourly[] = data.hourly.time.slice(0, 48).map((time: string, index: number) => ({
         time: new Date(time).toLocaleTimeString([], { hour: 'numeric', hour12: true }),
         temp: Math.round(data.hourly.temperature_2m[index]),
         precipProb: data.hourly.precipitation_probability[index],

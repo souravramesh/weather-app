@@ -7,7 +7,7 @@ import ChanceOfRainCard from '@/components/weather/ChanceOfRainCard';
 import DayForecastCard from '@/components/weather/DayForecastCard';
 import HeroSection from '@/components/weather/HeroSection';
 import HourlyForecast from '@/components/weather/HourlyForecast';
-import SegmentedTabs from '@/components/weather/SegmentedTabs';
+import SegmentedTabs, { TabType } from '@/components/weather/SegmentedTabs';
 import StatTiles from '@/components/weather/StatTiles';
 
 
@@ -27,6 +27,7 @@ const WeatherScreen = () => {
     name: string;
   } | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('Today');
 
   // Use selected location if available, otherwise use current location, otherwise fallback
   const lat = selectedLocation?.lat ?? currentLocation.coords?.latitude ?? 49.9935;
@@ -35,6 +36,7 @@ const WeatherScreen = () => {
 
   const { data: weather, isLoading, error } = useWeather(lat, lon);
   const scrollY = useSharedValue(0);
+  // console.log(weather, "weather");
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -63,16 +65,27 @@ const WeatherScreen = () => {
     );
   }
 
+  // Determine which data to show based on active tab
+  const isTomorrow = activeTab === 'Tomorrow';
+
+  // Get the appropriate hourly data slice
+  const displayHourly = isTomorrow
+    ? weather.hourly.slice(24, 48) // Tomorrow's hours (24-48)
+    : weather.hourly.slice(0, 24);  // Today's hours (0-24)
+
+  // Get the appropriate daily data
+  const displayDaily = isTomorrow ? weather.daily[1] : weather.daily[0];
+
   // Construct stats object for StatTiles
   const stats = {
     windSpeed: weather.current.windSpeed,
-    precipProb: weather.hourly[0]?.precipProb ?? 0,
-    humidity: weather.hourly[0]?.humidity ?? 0,
+    precipProb: displayHourly[0]?.precipProb ?? 0,
+    humidity: displayHourly[0]?.humidity ?? 0,
     pressure: weather.current.pressure,
   };
 
   // Map hourly data to chart data (x: index, y: temp)
-  const chartData = weather.hourly.map((item, index) => ({ x: index, y: item.temp }));
+  const chartData = displayHourly.map((item, index) => ({ x: index, y: item.temp }));
 
   return (
     <FlexView bg={Colors.background}>
@@ -83,6 +96,8 @@ const WeatherScreen = () => {
         weather={weather}
         locationName={locationName}
         onSearchPress={() => setShowSearch(true)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       <Animated.ScrollView
@@ -91,12 +106,22 @@ const WeatherScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <SegmentedTabs />
-        <StatTiles stats={stats} />
-        <HourlyForecast hourly={weather.hourly} />
-        <DayForecastCard data={chartData} />
-        <ChanceOfRainCard />
-        <TenDayForecast daily={weather.daily} />
+        <SegmentedTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {/* Show for Today and Tomorrow tabs */}
+        {(activeTab === 'Today' || activeTab === 'Tomorrow') && (
+          <>
+            <StatTiles stats={stats} />
+            <HourlyForecast hourly={displayHourly} />
+            <DayForecastCard data={chartData} />
+            <ChanceOfRainCard />
+          </>
+        )}
+
+        {/* Show only for 10 days tab */}
+        {activeTab === '10 days' && (
+          <TenDayForecast daily={weather.daily} />
+        )}
       </Animated.ScrollView>
 
       {showSearch && (

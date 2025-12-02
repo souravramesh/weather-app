@@ -1,14 +1,19 @@
 import Colors from '@/constants/Colors';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import BoxView from '../common/BoxView';
 import StyledText from '../common/StyledText';
 
-const TABS = ['Today', 'Tomorrow', '10 days'];
+const TABS = ['Today', 'Tomorrow', '10 days'] as const;
 
-const SegmentedTabs = () => {
-    const [activeTab, setActiveTab] = useState('Today');
+export type TabType = typeof TABS[number];
 
+interface SegmentedTabsProps {
+    activeTab: TabType;
+    onTabChange: (tab: TabType) => void;
+}
+
+const SegmentedTabs = ({ activeTab, onTabChange }: SegmentedTabsProps) => {
     return (
         <BoxView fd="row" g={16}>
             {TABS.map((tab) => {
@@ -16,7 +21,7 @@ const SegmentedTabs = () => {
                 return (
                     <TouchableOpacity
                         key={tab}
-                        onPress={() => setActiveTab(tab)}
+                        onPress={() => onTabChange(tab)}
                         style={[styles.tab, isActive && styles.activeTab]}
                     >
                         <StyledText
