@@ -1,114 +1,79 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery } from '@tanstack/react-query';
 
-const WEATHER_STORAGE_KEY = 'weather_data';
-
-export interface WeatherData {
-    current: {
-        temp: number;
-        location: string;
-        condition: string;
-        weathercode: number;
-        high: number;
-        low: number;
-        feelsLike: number;
-    };
-    stats: {
-        windSpeed: string;
-        rainChance: string;
-        pressure: string;
-        uvIndex: string;
-    };
-    hourly: Array<{
-        time: string;
-        temp: number;
-        icon: string; // simple string for now, e.g., 'sun', 'cloud'
-        weathercode: number;
-    }>;
-    daily: Array<{
-        day: string;
-        date: string;
-        high: number;
-        low: number;
-        condition: string;
-        rainChance: number;
-        weatherCode: number;
-    }>;
-    chartData: Array<{ x: number; y: number }>; // For the line chart
+export interface WeatherCurrent {
+    temp: number;
+    windSpeed: number;
+    weatherCode: number;
+    feelsLike: number;
+    pressure: number;
 }
 
-const MOCK_DATA: WeatherData = {
-    current: {
-        temp: 3,
-        location: 'Kharkiv, Ukraine',
-        condition: 'Sunny',
-        weathercode: 0,
-        high: 3,
-        low: -1,
-        feelsLike: -2,
-    },
-    stats: {
-        windSpeed: '12km/h',
-        rainChance: '24%',
-        pressure: '720 hpa',
-        uvIndex: '2,3',
-    },
-    hourly: [
-        { time: 'Now', temp: 10, icon: 'sun', weathercode: 0 },
-        { time: '10AM', temp: 8, icon: 'cloud-sun', weathercode: 1 },
-        { time: '11AM', temp: 5, icon: 'cloud', weathercode: 2 },
-        { time: '12PM', temp: 12, icon: 'sun', weathercode: 3 },
-        { time: '1PM', temp: 9, icon: 'sun', weathercode: 4 },
-        { time: '2PM', temp: 12, icon: 'cloud', weathercode: 5 },
-    ],
-    daily: [
-        { day: 'Today', date: 'Jan 18', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 0 },
-        { day: 'Thursday', date: 'Jan 19', high: 3, low: -2, condition: 'Cloudy', rainChance: 20, weatherCode: 1 },
-        { day: 'Thursday', date: 'Jan 20', high: 3, low: -2, condition: 'Cloudy', rainChance: 5, weatherCode: 2 },
-        { day: 'Thursday', date: 'Jan 21', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 0, weatherCode: 3 },
-        { day: 'Thursday', date: 'Jan 22', high: 3, low: -2, condition: 'Cloudy', rainChance: 60, weatherCode: 4 },
-        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 5 },
-        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 6 },
-    ],
-    chartData: [
-        { x: 0, y: -10 },
-        { x: 1, y: 0 },
-        { x: 2, y: 5 },
-        { x: 3, y: 2 },
-        { x: 4, y: 8 },
-        { x: 5, y: 5 },
-        { x: 6, y: 0 },
-    ]
+export interface WeatherHourly {
+    time: string;
+    temp: number;
+    precipProb: number;
+    humidity: number;
+    weatherCode: number;
+}
+
+export interface WeatherDaily {
+    date: string;
+    max: number;
+    min: number;
+    sunrise: string;
+    sunset: string;
+    weatherCode: number;
+}
+
+export interface WeatherData {
+    current: WeatherCurrent;
+    hourly: WeatherHourly[];
+    daily: WeatherDaily[];
+}
+
+const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
+    const response = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m,apparent_temperature,surface_pressure&hourly=temperature_2m,precipitation_probability,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto`
+    );
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch weather data');
+    }
+
+    const data = await response.json();
+
+    const current: WeatherCurrent = {
+        temp: Math.round(data.current.temperature_2m),
+        windSpeed: Math.round(data.current.wind_speed_10m),
+        weatherCode: data.current.weather_code,
+        feelsLike: Math.round(data.current.apparent_temperature),
+        pressure: Math.round(data.current.surface_pressure),
+    };
+
+    const hourly: WeatherHourly[] = data.hourly.time.slice(0, 24).map((time: string, index: number) => ({
+        time: new Date(time).toLocaleTimeString([], { hour: 'numeric', hour12: true }),
+        temp: Math.round(data.hourly.temperature_2m[index]),
+        precipProb: data.hourly.precipitation_probability[index],
+        humidity: data.hourly.relative_humidity_2m[index],
+        weatherCode: data.hourly.weather_code[index],
+    }));
+
+    const daily: WeatherDaily[] = data.daily.time.map((time: string, index: number) => ({
+        date: new Date(time).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }),
+        max: Math.round(data.daily.temperature_2m_max[index]),
+        min: Math.round(data.daily.temperature_2m_min[index]),
+        sunrise: new Date(data.daily.sunrise[index]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sunset: new Date(data.daily.sunset[index]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        weatherCode: data.daily.weather_code[index],
+    }));
+
+    return { current, hourly, daily };
 };
 
-const fetchWeather = async (): Promise<WeatherData> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // In a real app, we would fetch from API here
-    // For now, return mock data
-    return MOCK_DATA;
-};
-
-export const useWeather = () => {
+export const useWeather = (lat: number, lon: number) => {
     return useQuery({
-        queryKey: ['weather'],
-        queryFn: async () => {
-            // Try to get from storage first for instant load (if we were persisting real data)
-            // But for this mock, we'll just simulate the flow:
-            // 1. Check storage (optional for mock, but good practice)
-            // 2. Fetch new data
-            // 3. Save to storage
-
-            const stored = await AsyncStorage.getItem(WEATHER_STORAGE_KEY);
-            if (stored) {
-                // In real app, we might return stored data immediately and revalidate in background
-                // React Query handles stale-while-revalidate well.
-            }
-
-            const data = await fetchWeather();
-            await AsyncStorage.setItem(WEATHER_STORAGE_KEY, JSON.stringify(data));
-            return data;
-        }
+        queryKey: ['weather', lat, lon],
+        queryFn: () => fetchWeather(lat, lon),
+        staleTime: 5 * 60 * 1000, // 5 minutes
     });
 };

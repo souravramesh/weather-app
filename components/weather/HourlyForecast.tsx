@@ -21,7 +21,7 @@ const HourlyForecast = ({ hourly }: { hourly: any[] }) => {
                     <BoxView key={index} ai="center" g={5}>
                         <StyledText size={13}>{item.time}</StyledText>
                         <Image
-                            source={getWeatherIcon(item.weathercode)}
+                            source={getWeatherIcon(item.weatherCode)}
                             style={{ width: 26, height: 26 }}
                             resizeMode="contain"
                         />

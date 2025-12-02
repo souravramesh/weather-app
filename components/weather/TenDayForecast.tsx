@@ -1,4 +1,5 @@
 import Colors from '@/constants/Colors';
+import { getWeatherCondition } from '@/utils/getWeatherCondition';
 import { getWeatherIcon } from '@/utils/getWeatherIcon';
 import Entypo from '@expo/vector-icons/Entypo';
 import React from 'react';
@@ -13,14 +14,16 @@ const TenDayForecast = ({ daily }: { daily: any[] }) => {
             {daily?.map((item, index) => (
                 <BoxView key={index} bg={Colors.surface} r={20} p={15} mb={18} fd="row" ai="center" jc="space-between">
                     <BoxView g={5}>
-                        <StyledText size={16}>{item.day}, {item.date}</StyledText>
-                        <StyledText size={16} color={Colors.textSecondary} opacity={0.7}>{item.condition}</StyledText>
+                        <StyledText size={16}>{item.date}</StyledText>
+                        <StyledText size={16} color={Colors.textSecondary} opacity={0.7}>
+                            {getWeatherCondition(item.weatherCode)}
+                        </StyledText>
                     </BoxView>
 
                     <BoxView fd="row" ai="center" g={12}>
                         <BoxView ai="flex-end" g={5}>
-                            <StyledText size={16} color={Colors.text}>{item.high}°</StyledText>
-                            <StyledText size={16} color={Colors.text}>{item.low}°</StyledText>
+                            <StyledText size={16} color={Colors.text}>{item.max}°</StyledText>
+                            <StyledText size={16} color={Colors.text}>{item.min}°</StyledText>
                         </BoxView>
                         <Divider vertical height={40} />
                         <Image

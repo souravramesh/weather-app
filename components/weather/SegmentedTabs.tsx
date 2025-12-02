@@ -20,7 +20,6 @@ const SegmentedTabs = () => {
                         style={[styles.tab, isActive && styles.activeTab]}
                     >
                         <StyledText
-                            size={16}
                             weight='400'
                             color={Colors.text}
                             align="center"

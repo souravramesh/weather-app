@@ -1,18 +1,17 @@
 import PressureIcon from '@/assets/icons/stats/pressure-icon.svg';
 import RainIcon from '@/assets/icons/stats/rain-icon.svg';
-import UvIcon from '@/assets/icons/stats/uv-icon.svg';
 import WindIcon from '@/assets/icons/stats/wind-icon.svg';
 import Colors from '@/constants/Colors';
 import React from 'react';
 import BoxView from '../common/BoxView';
 import StyledText from '../common/StyledText';
 
-const StatTiles = ({ stats }: { stats: any }) => {
+const StatTiles = ({ stats }: { stats: { windSpeed: number; precipProb: number; humidity: number; pressure: number } }) => {
     const items = [
-        { label: 'Wind speed', value: stats?.windSpeed, Icon: WindIcon, sub: '2 km/h' },
-        { label: 'Rain chance', value: stats?.rainChance, Icon: RainIcon, sub: '10%' },
-        { label: 'Pressure', value: stats?.pressure, Icon: PressureIcon, sub: '32 hpa' },
-        { label: 'UV Index', value: stats?.uvIndex, Icon: UvIcon, sub: '0.3' },
+        { label: 'Wind speed', value: `${stats?.windSpeed} km/h`, Icon: WindIcon },
+        { label: 'Rain chance', value: `${stats?.precipProb}%`, Icon: RainIcon },
+        { label: 'Humidity', value: `${stats?.humidity}%`, Icon: RainIcon },
+        { label: 'Pressure', value: `${stats?.pressure} hPa`, Icon: PressureIcon },
     ];
 
     return (
@@ -28,7 +27,6 @@ const StatTiles = ({ stats }: { stats: any }) => {
                             <StyledText color={Colors.textSecondary}>{item.label}</StyledText>
                             <StyledText size={16} color={Colors.textSecondary}>{item.value}</StyledText>
                         </BoxView>
-                        <StyledText size={11} color={Colors.text} weight='500' style={{ position: 'absolute', right: 15, bottom: 15 }}>{item.sub}</StyledText>
                     </BoxView>
                 );
             })}

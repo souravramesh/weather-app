@@ -1,7 +1,7 @@
 import Colors from '@/constants/Colors'
-import { WeatherData } from '@/hooks/useWeather'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import React from 'react'
+import { TouchableOpacity } from 'react-native'
 import Animated, { SharedValue, useAnimatedProps, useAnimatedStyle } from 'react-native-reanimated'
 import BoxView from '../common/BoxView'
 
@@ -9,11 +9,12 @@ import BoxView from '../common/BoxView'
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
 interface HeaderProps {
-    weather: WeatherData
+    locationName: string | null
     textColor?: SharedValue<string>
+    onSearchPress: () => void
 }
 
-export default function Header ({ weather, textColor }: HeaderProps) {
+export default function Header ({ locationName, textColor, onSearchPress }: HeaderProps) {
     const animatedTextStyle = useAnimatedStyle(() => ({
         color: textColor?.value || Colors.white,
     }))
@@ -24,14 +25,16 @@ export default function Header ({ weather, textColor }: HeaderProps) {
 
     return (
         <BoxView fd="row" jc="space-between" ai="center" px={23} mt={16}>
-            <Animated.Text style={[{ fontSize: 22, fontFamily: 'Roboto_400Regular' }, animatedTextStyle]}>
-                {weather?.current?.location}
+            <Animated.Text style={[{ fontSize: 20, fontFamily: 'Inter_400Regular' }, animatedTextStyle]}>
+                {locationName || 'Loading...'}
             </Animated.Text>
-            <AnimatedIonicons
-                name="search-sharp"
-                size={24}
-                animatedProps={animatedIconProps}
-            />
+            <TouchableOpacity onPress={onSearchPress}>
+                <AnimatedIonicons
+                    name="search-sharp"
+                    size={22}
+                    animatedProps={animatedIconProps}
+                />
+            </TouchableOpacity>
         </BoxView>
     )
 }

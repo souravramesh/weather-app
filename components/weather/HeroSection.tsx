@@ -1,4 +1,5 @@
 import Colors from '@/constants/Colors';
+import { getWeatherCondition } from '@/utils/getWeatherCondition';
 import { getWeatherIcon } from '@/utils/getWeatherIcon';
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
@@ -18,11 +19,13 @@ import SegmentedTabs from './SegmentedTabs';
 interface HeroSectionProps {
     scrollY: SharedValue<number>;
     weather: any; // Type this properly if needed
+    locationName: string | null;
+    onSearchPress: () => void;
 }
 
 const HERO_HEIGHT = 380;
 
-const HeroSection = ({ scrollY, weather }: HeroSectionProps) => {
+const HeroSection = ({ scrollY, weather, locationName, onSearchPress }: HeroSectionProps) => {
     const containerStyle = useAnimatedStyle(() => {
         const height = interpolate(
             scrollY.value,
@@ -118,30 +121,31 @@ const HeroSection = ({ scrollY, weather }: HeroSectionProps) => {
                 resizeMode="cover"
             />
 
-            <Header weather={weather} textColor={headerTextColor} />
+            <Header locationName={locationName} textColor={headerTextColor} onSearchPress={onSearchPress} />
 
             {/* Main Content */}
             <Animated.View style={[styles.content, contentStyle]}>
                 <BoxView fd="row" jc="space-between" ai='flex-end'>
-                    <BoxView>
-                        <StyledText size={112} line={84} color={Colors.white}>{weather?.current?.temp}°</StyledText>
-                        <StyledText size={18} color={Colors.white} style={{ position: 'absolute', bottom: 2, left: 84 }}>Feels like {weather?.current?.feelsLike}°</StyledText>
+                    <BoxView g={10} ai='center'>
+                        <StyledText size={90} line={70} color={Colors.white}>{weather?.current?.temp}°</StyledText>
+                        <StyledText size={16} color={Colors.white}>Feels like {weather?.current?.feelsLike}°</StyledText>
                     </BoxView>
                     <BoxView ai='center'>
                         <Image
-                            source={getWeatherIcon(weather?.current?.weathercode)}
+                            source={getWeatherIcon(weather?.current?.weatherCode)}
                             style={{ width: 100, height: 100 }}
                             resizeMode="contain"
                         />
-                        <StyledText size={22} color={Colors.white}>{weather?.current?.condition}</StyledText>
+                        <StyledText size={18} color={Colors.white}>{getWeatherCondition(weather?.current?.weatherCode)}</StyledText>
                     </BoxView>
                 </BoxView>
 
-                <BoxView fd="row" jc="space-between" ai='center'>
-                    <StyledText size={18} color={Colors.white}>January 18, 16:14</StyledText>
-                    <BoxView ai='flex-end'>
-                        <StyledText size={18} weight='700' color={Colors.white}>Day {weather?.current?.high}°</StyledText>
-                        <StyledText size={18} weight='700' color={Colors.white}>Night {weather?.current?.low}°</StyledText>
+                <BoxView fd="row" jc="space-between" ai='flex-end'>
+                    <StyledText size={16} color={Colors.white}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}, {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</StyledText>
+
+                    <BoxView ai='flex-end' g={5}>
+                        <StyledText size={16} weight='700' color={Colors.white}>Max {weather?.daily?.[0]?.max}°</StyledText>
+                        <StyledText size={16} weight='700' color={Colors.white}>Min {weather?.daily?.[0]?.min}°</StyledText>
                     </BoxView>
                 </BoxView>
             </Animated.View>
@@ -150,11 +154,11 @@ const HeroSection = ({ scrollY, weather }: HeroSectionProps) => {
             <Animated.View style={[styles.smallHeader, smallHeaderStyle]}>
                 <BoxView fd="row" jc="space-between" ai='center'>
                     <BoxView fd="row" ai='flex-end'>
-                        <StyledText size={57} line={45} weight="500" color={Colors.textSecondary}>{weather?.current?.temp}°</StyledText>
-                        <StyledText size={16} color={Colors.textSecondary}>Feels like {weather?.current?.feelsLike}°</StyledText>
+                        <StyledText size={50} line={40} weight="500" color={Colors.textSecondary}>{weather?.current?.temp}°</StyledText>
+                        <StyledText color={Colors.textSecondary}>Feels like {weather?.current?.feelsLike}°</StyledText>
                     </BoxView>
                     <Image
-                        source={getWeatherIcon(weather?.current?.weathercode)}
+                        source={getWeatherIcon(weather?.current?.weatherCode)}
                         style={{ width: 60, height: 60 }}
                         resizeMode="contain"
                     />
@@ -174,8 +178,6 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 100,
         overflow: 'hidden',
-        // borderBottomLeftRadius: 30,
-        // borderBottomRightRadius: 30,
         backgroundColor: "#E1D3FA", // Fallback
     },
     content: {
