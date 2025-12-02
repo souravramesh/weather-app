@@ -23,6 +23,7 @@ export interface WeatherData {
         time: string;
         temp: number;
         icon: string; // simple string for now, e.g., 'sun', 'cloud'
+        weathercode: number;
     }>;
     daily: Array<{
         day: string;
@@ -31,6 +32,7 @@ export interface WeatherData {
         low: number;
         condition: string;
         rainChance: number;
+        weatherCode: number;
     }>;
     chartData: Array<{ x: number; y: number }>; // For the line chart
 }
@@ -52,21 +54,21 @@ const MOCK_DATA: WeatherData = {
         uvIndex: '2,3',
     },
     hourly: [
-        { time: 'Now', temp: 10, icon: 'sun' },
-        { time: '10AM', temp: 8, icon: 'cloud-sun' },
-        { time: '11AM', temp: 5, icon: 'cloud' },
-        { time: '12PM', temp: 12, icon: 'sun' },
-        { time: '1PM', temp: 9, icon: 'sun' },
-        { time: '2PM', temp: 12, icon: 'cloud' },
+        { time: 'Now', temp: 10, icon: 'sun', weathercode: 0 },
+        { time: '10AM', temp: 8, icon: 'cloud-sun', weathercode: 1 },
+        { time: '11AM', temp: 5, icon: 'cloud', weathercode: 2 },
+        { time: '12PM', temp: 12, icon: 'sun', weathercode: 3 },
+        { time: '1PM', temp: 9, icon: 'sun', weathercode: 4 },
+        { time: '2PM', temp: 12, icon: 'cloud', weathercode: 5 },
     ],
     daily: [
-        { day: 'Today', date: 'Jan 18', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10 },
-        { day: 'Thursday', date: 'Jan 19', high: 3, low: -2, condition: 'Cloudy', rainChance: 20 },
-        { day: 'Thursday', date: 'Jan 20', high: 3, low: -2, condition: 'Cloudy', rainChance: 5 },
-        { day: 'Thursday', date: 'Jan 21', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 0 },
-        { day: 'Thursday', date: 'Jan 22', high: 3, low: -2, condition: 'Cloudy', rainChance: 60 },
-        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10 },
-        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10 },
+        { day: 'Today', date: 'Jan 18', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 0 },
+        { day: 'Thursday', date: 'Jan 19', high: 3, low: -2, condition: 'Cloudy', rainChance: 20, weatherCode: 1 },
+        { day: 'Thursday', date: 'Jan 20', high: 3, low: -2, condition: 'Cloudy', rainChance: 5, weatherCode: 2 },
+        { day: 'Thursday', date: 'Jan 21', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 0, weatherCode: 3 },
+        { day: 'Thursday', date: 'Jan 22', high: 3, low: -2, condition: 'Cloudy', rainChance: 60, weatherCode: 4 },
+        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 5 },
+        { day: 'Thursday', date: 'Jan 23', high: 3, low: -2, condition: 'Cloudy and Sunny', rainChance: 10, weatherCode: 6 },
     ],
     chartData: [
         { x: 0, y: -10 },

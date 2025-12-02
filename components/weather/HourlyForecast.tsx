@@ -1,27 +1,33 @@
+import ClockIcon from '@/assets/icons/home/clock-icon.svg';
 import Colors from '@/constants/Colors';
+import { getWeatherIcon } from '@/utils/getWeatherIcon';
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { Image, ScrollView } from 'react-native';
 import BoxView from '../common/BoxView';
 import StyledText from '../common/StyledText';
 
 const HourlyForecast = ({ hourly }: { hourly: any[] }) => {
     return (
-        <BoxView mx={20} mb={20}>
+        <BoxView mb={16} bg={Colors.surface} r={18} p={16}>
             <BoxView fd="row" ai="center" mb={15} g={10}>
-                <StyledText size={16}>🕒</StyledText>
-                <StyledText size={16} weight="500">Hourly forecast</StyledText>
+                <BoxView bg={Colors.white} r={50} p={8}>
+                    <ClockIcon width={16} height={16} />
+                </BoxView>
+                <StyledText>Hourly forecast</StyledText>
             </BoxView>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <BoxView fd="row" g={12}>
-                    {hourly?.map((item, index) => (
-                        <BoxView key={index} ai="center" bg={index === 0 ? Colors.primary : Colors.surface} r={30} py={15} px={10} w={60}>
-                            <StyledText size={12} color={index === 0 ? Colors.white : Colors.textSecondary} mb={10}>{item.time}</StyledText>
-                            <StyledText size={20} mb={10}>{item.icon === 'sun' ? '☀️' : '☁️'}</StyledText>
-                            <StyledText size={16} weight="500" color={index === 0 ? Colors.white : Colors.textSecondary}>{item.temp}°</StyledText>
-                        </BoxView>
-                    ))}
-                </BoxView>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 30 }}>
+                {hourly?.map((item, index) => (
+                    <BoxView key={index} ai="center" g={5}>
+                        <StyledText size={13}>{item.time}</StyledText>
+                        <Image
+                            source={getWeatherIcon(item.weathercode)}
+                            style={{ width: 26, height: 26 }}
+                            resizeMode="contain"
+                        />
+                        <StyledText size={18}>{item.temp}°</StyledText>
+                    </BoxView>
+                ))}
             </ScrollView>
         </BoxView>
     );

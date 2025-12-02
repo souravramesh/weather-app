@@ -48,7 +48,6 @@ const WeatherScreen = () => {
       >
         <SegmentedTabs />
         <StatTiles stats={weather.stats} />
-
         <HourlyForecast hourly={weather.hourly} />
         <DayForecastCard data={weather.chartData} />
         <ChanceOfRainCard />

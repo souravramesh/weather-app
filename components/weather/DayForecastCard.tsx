@@ -1,3 +1,4 @@
+import CalendarMonthIcon from '@/assets/icons/home/calendar-month-icon.svg';
 import Colors from '@/constants/Colors';
 import React from 'react';
 import { Dimensions } from 'react-native';
@@ -15,10 +16,12 @@ const DayForecastCard = ({ data }: { data: any }) => {
     const path = `M 20 ${CHART_HEIGHT - 20} C 60 ${CHART_HEIGHT - 60}, 100 ${CHART_HEIGHT - 40}, 140 ${CHART_HEIGHT - 80} S 220 ${CHART_HEIGHT - 40}, 260 ${CHART_HEIGHT - 60} S 300 ${CHART_HEIGHT - 20}, 340 ${CHART_HEIGHT - 40}`;
 
     return (
-        <BoxView bg={Colors.surface} r={24} p={20} mx={20} mb={20}>
+        <BoxView bg={Colors.surface} r={24} p={15} mb={20}>
             <BoxView fd="row" ai="center" mb={20} g={10}>
-                <StyledText size={16}>📅</StyledText>
-                <StyledText size={16} weight="500">Day forecast</StyledText>
+                <BoxView bg={Colors.white} r={50} p={8}>
+                    <CalendarMonthIcon width={14} height={14} />
+                </BoxView>
+                <StyledText>Day forecast</StyledText>
             </BoxView>
 
             <BoxView h={CHART_HEIGHT} w="100%" ai="center" jc="center">
