@@ -1,12 +1,13 @@
 import ClockIcon from '@/assets/icons/home/clock-icon.svg';
 import Colors from '@/constants/Colors';
+import { WeatherHourly } from '@/types/weather';
 import { getWeatherIcon } from '@/utils/getWeatherIcon';
 import React from 'react';
 import { Image, ScrollView } from 'react-native';
 import BoxView from '../common/BoxView';
 import StyledText from '../common/StyledText';
 
-const HourlyForecast = ({ hourly }: { hourly: any[] }) => {
+const HourlyForecast = ({ hourly }: { hourly: WeatherHourly[] }) => {
     return (
         <BoxView mb={16} bg={Colors.surface} r={18} p={16}>
             <BoxView fd="row" ai="center" mb={15} g={10}>

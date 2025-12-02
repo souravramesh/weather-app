@@ -7,17 +7,6 @@ import {
     TextProps,
 } from "react-native";
 
-// const FontWeight = {
-//     "100": "Roboto_100Thin",
-//     "200": "Roboto_200ExtraLight",
-//     "300": "Roboto_300Light",
-//     "400": "Roboto_400Regular",
-//     "500": "Roboto_500Medium",
-//     "600": "Roboto_600SemiBold",
-//     "700": "Roboto_700Bold",
-//     "800": "Roboto_800ExtraBold",
-//     "900": "Roboto_900Black",
-// };
 const FontWeight = {
     "100": "Inter_100Thin",
     "200": "Inter_200ExtraLight",

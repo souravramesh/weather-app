@@ -1,15 +1,3 @@
-// import {
-//   Roboto_100Thin,
-//   Roboto_200ExtraLight,
-//   Roboto_300Light,
-//   Roboto_400Regular,
-//   Roboto_500Medium,
-//   Roboto_600SemiBold,
-//   Roboto_700Bold,
-//   Roboto_800ExtraBold,
-//   Roboto_900Black,
-//   useFonts,
-// } from "@expo-google-fonts/roboto";
 import {
   Inter_100Thin,
   Inter_200ExtraLight,
@@ -43,17 +31,6 @@ export default function RootLayout () {
     Inter_800ExtraBold,
     Inter_900Black,
   });
-  // const [loaded, error] = useFonts({
-  //   Roboto_100Thin,
-  //   Roboto_200ExtraLight,
-  //   Roboto_300Light,
-  //   Roboto_400Regular,
-  //   Roboto_500Medium,
-  //   Roboto_600SemiBold,
-  //   Roboto_700Bold,
-  //   Roboto_800ExtraBold,
-  //   Roboto_900Black,
-  // });
 
   useEffect(() => {
     if (loaded || error) {

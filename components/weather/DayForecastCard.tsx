@@ -1,6 +1,6 @@
 import CalendarMonthIcon from '@/assets/icons/home/calendar-month-icon.svg';
 import Colors from '@/constants/Colors';
-import { WeatherDaily } from '@/hooks/useWeather';
+import { WeatherDaily } from '@/types/weather';
 import * as scale from 'd3-scale';
 import * as shape from 'd3-shape';
 import React from 'react';

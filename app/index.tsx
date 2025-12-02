@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { ActivityIndicator, Modal, StatusBar, StyleSheet } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
 import StyledText from '@/components/common/StyledText';
@@ -9,9 +9,9 @@ import HeroSection from '@/components/weather/HeroSection';
 import HourlyForecast from '@/components/weather/HourlyForecast';
 import SegmentedTabs, { TabType } from '@/components/weather/SegmentedTabs';
 import StatTiles from '@/components/weather/StatTiles';
+import SunTimes from '@/components/weather/SunTimes';
 
 
-import BoxView from '@/components/common/BoxView';
 import FlexView from '@/components/common/FlexView';
 import LocationSearch from '@/components/weather/LocationSearch';
 import TenDayForecast from '@/components/weather/TenDayForecast';
@@ -35,8 +35,9 @@ const WeatherScreen = () => {
   const locationName = selectedLocation?.name ?? currentLocation.locationName;
 
   const { data: weather, isLoading, error } = useWeather(lat, lon);
+  console.log(weather);
+
   const scrollY = useSharedValue(0);
-  console.log(weather, "weather");
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -50,7 +51,8 @@ const WeatherScreen = () => {
 
   if (isLoading || currentLocation.loading) {
     return (
-      <FlexView jc="center" ai="center" bg={Colors.background} style={{ flex: 1 }}>
+      <FlexView jc="center" ai="center" bg={Colors.background} g={10}>
+        <ActivityIndicator size="large" color={Colors.primary} />
         <StyledText>Loading...</StyledText>
       </FlexView>
     );
@@ -58,25 +60,21 @@ const WeatherScreen = () => {
 
   if (error || !weather) {
     return (
-      <FlexView jc="center" ai="center" bg={Colors.background} style={{ flex: 1 }}>
+      <FlexView jc="center" ai="center" bg={Colors.background} g={10}>
         <StyledText>Error loading weather data</StyledText>
         {currentLocation.error && <StyledText>{currentLocation.error}</StyledText>}
       </FlexView>
     );
   }
 
-  // Determine which data to show based on active tab
   const isTomorrow = activeTab === 'Tomorrow';
 
-  // Get the appropriate hourly data slice
   const displayHourly = isTomorrow
-    ? weather.hourly.slice(24, 48) // Tomorrow's hours (24-48)
-    : weather.hourly.slice(0, 24);  // Today's hours (0-24)
+    ? weather.hourly.slice(24, 48)
+    : weather.hourly.slice(0, 24);
 
-  // Get the appropriate daily data
   const displayDaily = isTomorrow ? weather.daily[1] : weather.daily[0];
 
-  // Construct stats object for StatTiles
   const stats = {
     windSpeed: weather.current.windSpeed,
     precipProb: displayHourly[0]?.precipProb ?? 0,
@@ -86,7 +84,7 @@ const WeatherScreen = () => {
 
   return (
     <FlexView bg={Colors.background}>
-      <StatusBar />
+      <StatusBar backgroundColor={"#704ad2"} />
 
       <HeroSection
         scrollY={scrollY}
@@ -105,51 +103,41 @@ const WeatherScreen = () => {
       >
         <SegmentedTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Show for Today and Tomorrow tabs */}
         {(activeTab === 'Today' || activeTab === 'Tomorrow') && (
           <>
             <StatTiles stats={stats} />
             <HourlyForecast hourly={displayHourly} />
             <DayForecastCard daily={weather.daily} />
-            <ChanceOfRainCard />
+            <ChanceOfRainCard hourly={displayHourly} />
+            <SunTimes today={displayDaily} />
           </>
         )}
 
-        {/* Show only for 10 days tab */}
         {activeTab === '10 days' && (
           <TenDayForecast daily={weather.daily} />
         )}
       </Animated.ScrollView>
 
-      {showSearch && (
-        <BoxView
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1000,
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 16,
-          }}
-        >
-          <LocationSearch
-            onLocationSelect={handleLocationSelect}
-            onClose={() => setShowSearch(false)}
-          />
-        </BoxView>
-      )}
+      <Modal
+        visible={showSearch}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowSearch(false)}
+      >
+        <LocationSearch
+          onLocationSelect={handleLocationSelect}
+          onClose={() => setShowSearch(false)}
+        />
+      </Modal>
+
     </FlexView>
   );
 };
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingTop: 400, // Match HERO_HEIGHT
-    paddingBottom: 40,
+    paddingTop: 400,
+    paddingBottom: 20,
     paddingHorizontal: 16,
   },
 });

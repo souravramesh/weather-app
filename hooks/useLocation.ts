@@ -1,17 +1,6 @@
+import { LocationData } from '@/types/location';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
-
-export interface LocationCoords {
-    latitude: number;
-    longitude: number;
-}
-
-export interface LocationData {
-    coords: LocationCoords | null;
-    locationName: string | null;
-    error: string | null;
-    loading: boolean;
-}
 
 export const useLocation = () => {
     const [location, setLocation] = useState<LocationData>({

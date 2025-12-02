@@ -2,6 +2,7 @@ import Colors from '@/constants/Colors';
 import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import BoxView from '../common/BoxView';
+import FlexView from '../common/FlexView';
 import StyledText from '../common/StyledText';
 
 interface LocationResult {
@@ -56,7 +57,7 @@ const LocationSearch = ({ onLocationSelect, onClose }: LocationSearchProps) => {
     };
 
     return (
-        <BoxView bg={Colors.surface} r={20} p={16} style={{ width: '100%', maxHeight: '80%' }}>
+        <FlexView bg={Colors.background} p={16}>
             <BoxView fd="row" jc="space-between" ai="center" mb={16}>
                 <StyledText size={18} weight="600">Search Location</StyledText>
                 <TouchableOpacity onPress={onClose}>
@@ -107,7 +108,7 @@ const LocationSearch = ({ onLocationSelect, onClose }: LocationSearchProps) => {
                     <StyledText color={Colors.textSecondary}>No locations found</StyledText>
                 </BoxView>
             )}
-        </BoxView>
+        </FlexView>
     );
 };
 

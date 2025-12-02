@@ -1,7 +1,6 @@
 import Colors from '@/constants/Colors';
 import { getWeatherCondition } from '@/utils/getWeatherCondition';
 import { getWeatherIcon } from '@/utils/getWeatherIcon';
-import Entypo from '@expo/vector-icons/Entypo';
 import React from 'react';
 import { Image } from 'react-native';
 import BoxView from '../common/BoxView';
@@ -15,15 +14,15 @@ const TenDayForecast = ({ daily }: { daily: any[] }) => {
                 <BoxView key={index} bg={Colors.surface} r={20} p={15} mb={18} fd="row" ai="center" jc="space-between">
                     <BoxView g={5}>
                         <StyledText size={16}>{item.date}</StyledText>
-                        <StyledText size={16} color={Colors.textSecondary} opacity={0.7}>
+                        <StyledText color={Colors.textSecondary} opacity={0.7}>
                             {getWeatherCondition(item.weatherCode)}
                         </StyledText>
                     </BoxView>
 
                     <BoxView fd="row" ai="center" g={12}>
                         <BoxView ai="flex-end" g={5}>
-                            <StyledText size={16} color={Colors.text}>{item.max}°</StyledText>
-                            <StyledText size={16} color={Colors.text}>{item.min}°</StyledText>
+                            <StyledText color={Colors.text}>{item.max}°</StyledText>
+                            <StyledText color={Colors.text}>{item.min}°</StyledText>
                         </BoxView>
                         <Divider vertical height={40} />
                         <Image
@@ -31,9 +30,6 @@ const TenDayForecast = ({ daily }: { daily: any[] }) => {
                             style={{ width: 50, height: 50 }}
                             resizeMode="contain"
                         />
-                        <BoxView bg={Colors.white} r={50}>
-                            <Entypo name="chevron-small-down" size={20} color="black" />
-                        </BoxView>
                     </BoxView>
                 </BoxView>
             ))}

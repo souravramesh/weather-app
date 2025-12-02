@@ -1,4 +1,5 @@
 import Colors from '@/constants/Colors';
+import { WeatherData } from '@/types/weather';
 import { getWeatherCondition } from '@/utils/getWeatherCondition';
 import { getWeatherIcon } from '@/utils/getWeatherIcon';
 import React from 'react';
@@ -18,7 +19,7 @@ import SegmentedTabs, { TabType } from './SegmentedTabs';
 
 interface HeroSectionProps {
     scrollY: SharedValue<number>;
-    weather: any; // Type this properly if needed
+    weather: WeatherData;
     locationName: string | null;
     onSearchPress: () => void;
     activeTab: TabType;
@@ -94,7 +95,6 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress, activeTab,
         };
     });
 
-    // Animate header text color from white to black
     const headerTextColor = useDerivedValue(() => {
         return interpolateColor(
             scrollY.value,
@@ -112,7 +112,9 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress, activeTab,
                 resizeMode="cover"
             />
 
-            <Header locationName={locationName} textColor={headerTextColor} onSearchPress={onSearchPress} />
+            <Animated.View style={{ zIndex: 1 }}>
+                <Header locationName={locationName} textColor={headerTextColor} onSearchPress={onSearchPress} />
+            </Animated.View>
 
             {/* Main Content */}
             <Animated.View style={[styles.content, contentStyle]}>
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 100,
         overflow: 'hidden',
-        backgroundColor: "#E1D3FA", // Fallback
+        backgroundColor: "#E2D3FA",
     },
     content: {
         flex: 1,

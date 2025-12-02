@@ -1,35 +1,5 @@
+import { WeatherCurrent, WeatherDaily, WeatherData, WeatherHourly } from '@/types/weather';
 import { useQuery } from '@tanstack/react-query';
-
-export interface WeatherCurrent {
-    temp: number;
-    windSpeed: number;
-    weatherCode: number;
-    feelsLike: number;
-    pressure: number;
-}
-
-export interface WeatherHourly {
-    time: string;
-    temp: number;
-    precipProb: number;
-    humidity: number;
-    weatherCode: number;
-}
-
-export interface WeatherDaily {
-    date: string;
-    max: number;
-    min: number;
-    sunrise: string;
-    sunset: string;
-    weatherCode: number;
-}
-
-export interface WeatherData {
-    current: WeatherCurrent;
-    hourly: WeatherHourly[];
-    daily: WeatherDaily[];
-}
 
 const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
     const response = await fetch(
@@ -62,8 +32,10 @@ const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
         date: new Date(time).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }),
         max: Math.round(data.daily.temperature_2m_max[index]),
         min: Math.round(data.daily.temperature_2m_min[index]),
-        sunrise: new Date(data.daily.sunrise[index]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sunset: new Date(data.daily.sunset[index]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sunrise: new Date(data.daily.sunrise[index]).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true }),
+        sunset: new Date(data.daily.sunset[index]).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true }),
+        sunriseRaw: data.daily.sunrise[index],
+        sunsetRaw: data.daily.sunset[index],
         weatherCode: data.daily.weather_code[index],
     }));
 
