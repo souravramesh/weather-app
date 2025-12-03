@@ -1,20 +1,22 @@
+import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
-import { ActivityIndicator, Modal, StatusBar, StyleSheet } from 'react-native';
+import { ActivityIndicator, Modal, RefreshControl, StatusBar, StyleSheet } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
 import StyledText from '@/components/common/StyledText';
-import ChanceOfRainCard from '@/components/weather/ChanceOfRainCard';
-import DayForecastCard from '@/components/weather/DayForecastCard';
-import HeroSection from '@/components/weather/HeroSection';
-import HourlyForecast from '@/components/weather/HourlyForecast';
-import SegmentedTabs, { TabType } from '@/components/weather/SegmentedTabs';
-import StatTiles from '@/components/weather/StatTiles';
-import SunTimes from '@/components/weather/SunTimes';
+import ChanceOfRainCard from '@/components/home/ChanceOfRainCard';
+import DayForecastCard from '@/components/home/DayForecastCard';
+import HeroSection from '@/components/home/HeroSection';
+import HourlyForecast from '@/components/home/HourlyForecast';
+import SegmentedTabs, { TabType } from '@/components/home/SegmentedTabs';
+import StatTiles from '@/components/home/StatTiles';
+import SunTimes from '@/components/home/SunTimes';
 
 
+import BoxView from '@/components/common/BoxView';
 import FlexView from '@/components/common/FlexView';
-import LocationSearch from '@/components/weather/LocationSearch';
-import TenDayForecast from '@/components/weather/TenDayForecast';
+import LocationSearch from '@/components/home/LocationSearch';
+import TenDayForecast from '@/components/home/TenDayForecast';
 import Colors from '@/constants/Colors';
 import { useLocation } from '@/hooks/useLocation';
 import { useWeather } from '@/hooks/useWeather';
@@ -28,15 +30,14 @@ const WeatherScreen = () => {
   } | null>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('Today');
+  const [refreshing, setRefreshing] = useState(false);
 
   // Use selected location if available, otherwise use current location, otherwise fallback
   const lat = selectedLocation?.lat ?? currentLocation.coords?.latitude ?? 49.9935;
   const lon = selectedLocation?.lon ?? currentLocation.coords?.longitude ?? 36.2304;
   const locationName = selectedLocation?.name ?? currentLocation.locationName;
 
-  const { data: weather, isLoading, error } = useWeather(lat, lon);
-  console.log(weather);
-
+  const { data: weather, isLoading, error, isFromCache, cacheTimestamp, refetch } = useWeather(lat, lon);
   const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -51,20 +52,24 @@ const WeatherScreen = () => {
 
   if (isLoading || currentLocation.loading) {
     return (
-      <FlexView jc="center" ai="center" bg={Colors.background} g={10}>
+      <FlexView jc="center" ai="center" bg={Colors.background}>
         <ActivityIndicator size="large" color={Colors.primary} />
-        <StyledText>Loading...</StyledText>
       </FlexView>
     );
   }
 
   if (error || !weather) {
-    return (
-      <FlexView jc="center" ai="center" bg={Colors.background} g={10}>
-        <StyledText>Error loading weather data</StyledText>
-        {currentLocation.error && <StyledText>{currentLocation.error}</StyledText>}
-      </FlexView>
-    );
+    // Show error only if we don't have cached data
+    if (!weather) {
+      return (
+        <FlexView jc="center" ai="center" bg={Colors.background} g={10}>
+          <StyledText>Unable to load weather data</StyledText>
+          <StyledText style={{ opacity: 0.6, fontSize: 14 }}>
+            {currentLocation.error || 'Please check your internet connection'}
+          </StyledText>
+        </FlexView>
+      );
+    }
   }
 
   const isTomorrow = activeTab === 'Tomorrow';
@@ -80,6 +85,24 @@ const WeatherScreen = () => {
     precipProb: displayHourly[0]?.precipProb ?? 0,
     humidity: displayHourly[0]?.humidity ?? 0,
     pressure: weather.current.pressure,
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    refetch();
+    setRefreshing(false);
+  };
+
+  const getCacheAgeText = () => {
+    if (!cacheTimestamp) return '';
+    const ageMinutes = Math.floor((Date.now() - cacheTimestamp) / (60 * 1000));
+    if (ageMinutes < 1) return 'Updated just now';
+    if (ageMinutes === 1) return 'Updated 1 minute ago';
+    if (ageMinutes < 60) return `Updated ${ageMinutes} minutes ago`;
+    const ageHours = Math.floor(ageMinutes / 60);
+    if (ageHours === 1) return 'Updated 1 hour ago';
+    return `Updated ${ageHours} hours ago`;
   };
 
   return (
@@ -100,6 +123,15 @@ const WeatherScreen = () => {
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={Colors.primary}
+            colors={[Colors.primary]}
+            progressViewOffset={400}
+          />
+        }
       >
         <SegmentedTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -115,6 +147,21 @@ const WeatherScreen = () => {
 
         {activeTab === '10 days' && (
           <TenDayForecast daily={weather.daily} />
+        )}
+        {isFromCache && (
+          <BoxView
+            fd="row"
+            ai="center"
+            jc="space-between"
+            mx={10}
+          >
+            <StyledText opacity={0.8}>
+              Offline Mode
+            </StyledText>
+            <StyledText size={12} opacity={0.6}>
+              {getCacheAgeText()}
+            </StyledText>
+          </BoxView>
         )}
       </Animated.ScrollView>
 

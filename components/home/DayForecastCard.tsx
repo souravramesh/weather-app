@@ -11,10 +11,10 @@ import StyledText from '../common/StyledText';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 30;
-const CHART_HEIGHT = 160;
-const PADDING_TOP = 40; // Space for tooltip
-const PADDING_BOTTOM = 30;
-const PADDING_LEFT = 35; // Space for Y-axis labels
+const CHART_HEIGHT = 180;
+const PADDING_TOP = 35; // Space for tooltip
+const PADDING_BOTTOM = 50; // Space for X-axis labels
+const PADDING_LEFT = 30; // Space for Y-axis labels
 const PADDING_RIGHT = 20;
 
 interface DayForecastCardProps {
@@ -79,8 +79,8 @@ const DayForecastCard = ({ daily }: DayForecastCardProps) => {
     const finalYTicks = yTicks.length >= 2 ? yTicks : [maxTemp, Math.round((maxTemp + minTemp) / 2), minTemp];
 
     return (
-        <BoxView bg={Colors.surface} r={24} p={15} mb={20}>
-            <BoxView fd="row" ai="center" mb={10} g={10}>
+        <BoxView bg={Colors.surface} r={18} p={15} mb={20}>
+            <BoxView fd="row" ai="center" g={10}>
                 <BoxView bg={Colors.white} r={50} p={8}>
                     <CalendarMonthIcon width={14} height={14} />
                 </BoxView>

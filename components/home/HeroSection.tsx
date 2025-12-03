@@ -134,7 +134,7 @@ const HeroSection = ({ scrollY, weather, locationName, onSearchPress, activeTab,
                 </BoxView>
 
                 <BoxView fd="row" jc="space-between" ai='flex-end'>
-                    <StyledText size={16} color={Colors.white}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}, {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</StyledText>
+                    <StyledText size={16} color={Colors.white}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</StyledText>
 
                     <BoxView ai='flex-end' g={5}>
                         <StyledText size={16} weight='700' color={Colors.white}>Max {weather?.daily?.[0]?.max}°</StyledText>

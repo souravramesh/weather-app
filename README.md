@@ -112,7 +112,7 @@ weather-app/
 │   │   ├── FlexView.tsx    # Flexible container component
 │   │   ├── StyledText.tsx  # Typography component
 │   │   └── Divider.tsx     # Divider component
-│   └── weather/            # Weather-specific components
+│   └── home/            # Home screen components
 │       ├── HeroSection.tsx        # Animated header with current weather
 │       ├── Header.tsx             # Navigation header
 │       ├── HourlyForecast.tsx     # Hourly weather cards
@@ -143,9 +143,9 @@ weather-app/
 
 ### Open-Meteo Weather API
 
-**Base URL**: `https://api.open-meteo.com/v1/forecast`
+**Base URL**: `https://api.open-meteo.com`
 
-**Endpoint**: `/forecast`
+**Endpoint**: `/v1/forecast`
 
 **Parameters**:
 - `latitude` - Location latitude
@@ -179,7 +179,7 @@ https://api.open-meteo.com/v1/forecast?latitude=49.9935&longitude=36.2304&curren
 - **Color Palette**: Custom gradient-based color scheme with purple primary colors
 - **Typography**: Inter font family for clean, modern text rendering
 - **Spacing**: Consistent 16px padding and gap system
-- **Border Radius**: 24px for cards, creating a soft, modern aesthetic
+- **Border Radius**: 18px for cards, creating a soft, modern aesthetic
 
 ### Animations
 
@@ -187,7 +187,6 @@ The app features extensive animations powered by React Native Reanimated:
 
 - **Scroll-based Hero Animation**: Hero section transforms as user scrolls
 - **Dynamic Header**: Header changes appearance based on scroll position
-- **Smooth Transitions**: Tab switching and component mounting animations
 - **Chart Animations**: D3-powered temperature chart with gradient fills
 
 ### Performance Optimizations

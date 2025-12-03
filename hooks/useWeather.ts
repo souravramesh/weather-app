@@ -1,5 +1,7 @@
 import { WeatherCurrent, WeatherDaily, WeatherData, WeatherHourly } from '@/types/weather';
+import { getWeatherData, isCacheValid, saveWeatherData } from '@/utils/storage';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
     const response = await fetch(
@@ -42,10 +44,80 @@ const fetchWeather = async (lat: number, lon: number): Promise<WeatherData> => {
     return { current, hourly, daily };
 };
 
-export const useWeather = (lat: number, lon: number) => {
-    return useQuery({
+export interface UseWeatherResult {
+    data: WeatherData | undefined;
+    isLoading: boolean;
+    error: Error | null;
+    isFromCache: boolean;
+    cacheTimestamp: number | null;
+    refetch: () => void;
+}
+
+export const useWeather = (lat: number, lon: number): UseWeatherResult => {
+    const [initialData, setInitialData] = useState<WeatherData | undefined>(undefined);
+    const [isFromCache, setIsFromCache] = useState(false);
+    const [cacheTimestamp, setCacheTimestamp] = useState<number | null>(null);
+
+    // Load cached data on mount or when location changes
+    useEffect(() => {
+        const loadCachedData = async () => {
+            const cached = await getWeatherData(lat, lon);
+            console.log(cached, 'cached');
+
+            if (cached) {
+                setInitialData(cached.data);
+                setIsFromCache(true);
+                setCacheTimestamp(cached.timestamp);
+            } else {
+                setInitialData(undefined);
+                setIsFromCache(false);
+                setCacheTimestamp(null);
+            }
+        };
+
+        loadCachedData();
+    }, [lat, lon]);
+
+    const query = useQuery({
         queryKey: ['weather', lat, lon],
-        queryFn: () => fetchWeather(lat, lon),
+        queryFn: async () => {
+            const data = await fetchWeather(lat, lon);
+            // Save to cache after successful fetch
+            await saveWeatherData(lat, lon, data);
+            setIsFromCache(false);
+            setCacheTimestamp(Date.now());
+            return data;
+        },
         staleTime: 5 * 60 * 1000, // 5 minutes
+        // Only fetch if we don't have valid cached data
+        enabled: true,
+        refetchOnMount: (query) => {
+            // Don't refetch if we have valid cached data
+            if (initialData && cacheTimestamp && isCacheValid(cacheTimestamp)) {
+                return false;
+            }
+            return true;
+        },
+        // Use placeholderData instead of initialData to avoid cache conflicts
+        placeholderData: initialData,
+        retry: (failureCount, error) => {
+            // Don't retry if we have cached data
+            if (initialData) {
+                return false;
+            }
+            return failureCount < 2;
+        },
     });
+
+    return {
+        data: query.data,
+        isLoading: query.isLoading && !initialData,
+        error: query.error,
+        isFromCache: isFromCache && !query.isFetching,
+        cacheTimestamp,
+        refetch: () => {
+            setIsFromCache(false);
+            query.refetch();
+        },
+    };
 };
