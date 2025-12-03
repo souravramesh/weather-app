@@ -21,8 +21,10 @@ This weather application provides real-time weather information with a stunning,
 - **🌅 Sunrise/Sunset Times**: Daily sun times with visual indicators
 - **🌧️ Precipitation Probability**: Hourly rain chance visualization
 - **🎨 Animated Hero Section**: Dynamic background with smooth scroll animations
+- **🔄 Pull-to-Refresh**: Manual weather data refresh capability
 - **🔍 Location Search**: Search and select weather for any location worldwide
 - **📱 Responsive Design**: Optimized for various screen sizes
+- **⚡ Offline Support**: AsyncStorage caching for improved performance
 
 ## 🛠️ Tech Stack
 
@@ -33,10 +35,12 @@ This weather application provides real-time weather information with a stunning,
 
 ### State Management & Data Fetching
 - **@tanstack/react-query** (^5.90.11) - Server state management
+- **@react-native-async-storage/async-storage** (^2.2.0) - Local data persistence
 
 ### UI & Animations
 - **react-native-reanimated** (~4.1.1) - High-performance animations
 - **react-native-svg** (^15.12.1) - SVG rendering
+- **expo-haptics** (~15.0.7) - Haptic feedback
 
 ### Data Visualization
 - **d3-scale** (^4.0.2) - Data scaling utilities
@@ -192,6 +196,7 @@ The app features extensive animations powered by React Native Reanimated:
 ### Performance Optimizations
 
 - **React Query**: Intelligent data caching and background refetching
+- **AsyncStorage**: Persistent local storage for offline capability
 - **Optimized Re-renders**: Shared values and worklets for 60fps animations
 
 ### Weather Code Mapping
@@ -201,6 +206,10 @@ The app includes a comprehensive weather code utility that maps Open-Meteo weath
 - Appropriate weather icons
 - Visual indicators
 
+### Accessibility
+- Semantic component structure
+- Readable text contrast ratios
+- Touch target sizes optimized for mobile
 
 ## 📄 License
 
